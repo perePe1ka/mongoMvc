@@ -1,0 +1,23 @@
+put http://localhost:8080/api/books/xxxxx
+{
+    "book": "test update",
+    "author": "test update",
+    "genres": "test update",
+    "index": "0"
+}
+
+delete http://localhost:8080/api/books/xxxxx
+
+Get getbyId http://localhost:8080/api/books/xxxxx
+
+GETALL http://localhost:8080/api/books
+
+Post http://localhost:8080/api/createBooks
+{
+    "book": "test create",
+    "author": "test create",
+    "genres": "test create",
+    "index": 1
+}
+
++аггрегация + каскад + таблицы ещё
