@@ -1,23 +1,56 @@
-put http://localhost:8080/api/books/xxxxx
+Монго:
+getAll работает у всех
+GET
+http://localhost:8080/books/authors/all
+http://localhost:8080/books/genres/all
+http://localhost:8080/books
+
+getBy работаее у всех
+GET
+http://localhost:8080/books/6545343d35f45b745bc04095
+http://localhost:8080/books/6545343d35f45b745bc04095/authors
+http://localhost:8080/books/6545343d35f45b745bc04095/genres
+
+
+Delete работает у всех
+DELETE
+http://localhost:8080/books/6545343d35f45b745bc04092
+http://localhost:8080/books/6545343e35f45b745bc04098/authors/6545343e35f45b745bc04099
+http://localhost:8080/books/6545343e35f45b745bc04098/genres/6545343e35f45b745bc04099
+
+Create работает у book:
+POST
+http://localhost:8080/books
 {
-    "book": "test update",
-    "author": "test update",
-    "genres": "test update",
-    "index": "0"
+  "title": "Book 4",
+  "publicationYear": 2022,
+  "pageCount": 350,
+  "author": {
+    "name": "John",
+    "surname": "Doe",
+    "birthdate": "1995-08-20T00:00:00.000Z"
+  },
+  "genre": {
+    "name": "Fantasy"
+  }
 }
 
-delete http://localhost:8080/api/books/xxxxx
 
-Get getbyId http://localhost:8080/api/books/xxxxx
-
-GETALL http://localhost:8080/api/books
-
-Post http://localhost:8080/api/createBooks
+Edit работает у book:
+PUT
+http://localhost:8080/books/6545343e35f45b745bc0409b
 {
-    "book": "test create",
-    "author": "test create",
-    "genres": "test create",
-    "index": 1
+  "title": "Book 4",
+  "publicationYear": 2022,
+  "pageCount": 350,
+  "author": {
+    "name": "John",
+    "surname": "Doe",
+    "birthdate": "1995-08-20T00:00:00.000Z"
+  },
+  "genre": {
+    "name": "Fantasy"
+  }
 }
 
-+аггрегация + каскад + таблицы ещё
++аггрегация + каскад

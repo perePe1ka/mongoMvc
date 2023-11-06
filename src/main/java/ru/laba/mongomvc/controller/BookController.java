@@ -4,130 +4,71 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.laba.mongomvc.models.Book;
+import ru.laba.mongomvc.models.AggregationResult;
+import ru.laba.mongomvc.models.Books;
 import ru.laba.mongomvc.repos.BookRepos;
+import ru.laba.mongomvc.services.AggregationService;
 
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:8081")
+
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/books")
 public class BookController {
 
     @Autowired
     private BookRepos bookRepos;
 
-    @PutMapping("/books/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable("id") String id, @RequestBody Book book) {
-        Optional<Book> book1 = bookRepos.findById(id);
+    @Autowired
+    private AggregationService aggregationService;
 
-        if (book1.isPresent()) {
-            Book book2 = book1.get();
-            book2.setBook(book.getBook());
-            book2.setAuthor(book.getAuthor());
-            book2.setGenres(book.getGenres());
-            book2.setIndex(book.getIndex());
-            return new ResponseEntity<>(bookRepos.save(book2), HttpStatus.OK);
+    @GetMapping
+    public List<Books> getAllBooks() {
+        return bookRepos.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Books> getBookById(@PathVariable String id) {
+        Optional<Books> book = bookRepos.findById(id);
+        return book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<Books> createBook(@RequestBody Books book) {
+        Books createdBook = bookRepos.save(book);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdBook);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Books> updateBook(@PathVariable String id, @RequestBody Books updatedBook) {
+        Optional<Books> existingBook = bookRepos.findById(id);
+
+        if (existingBook.isPresent()) {
+            updatedBook.setId(id);
+            Books savedBook = bookRepos.save(updatedBook);
+            return ResponseEntity.ok(savedBook);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 
-    @PostMapping("/createBooks")
-    public ResponseEntity<Book> createBook(@RequestBody Book book) {
-        try {
-            Book createdBook = bookRepos.save(book);
-            return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable String id) {
+        Optional<Books> existingBook = bookRepos.findById(id);
 
-
-//    @PostMapping("/books")
-//    public Book createBook(@RequestBody Book book) {
-////            Book book1 = bookRepos.save(new Book(book.getBook(), book.getAuthor(), book.getGenres(), book.getIndex()));
-//        return bookRepos.save(book);
-//    }
-
-//    @GetMapping("/books")
-//    public ResponseEntity<List<Book>> getAllBooks(@RequestParam(required = false) String book) {
-//        try {
-//            List<Book> books = new ArrayList<Book>();
-//
-//            if (book == null)
-//                bookRepos.findAll().forEach(books::add);
-//            else
-//                bookRepos.findByBook(book).forEach(books::add);
-//
-//            if (books.isEmpty()) {
-//                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//            }
-//
-//            return new ResponseEntity<>(books, HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-
-    @GetMapping("/books")
-    public ResponseEntity<List<Book>> getAllBooks() {
-        try {
-            List<Book> books = bookRepos.findAll();
-
-            if (books.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(books, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
-    @GetMapping("/books/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable("id") String id) {
-        Optional<Book> book = bookRepos.findById(id);
-
-        if (book.isPresent()) {
-            return new ResponseEntity<>(book.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @GetMapping("/books/authors")
-    public ResponseEntity<List<Book>> findByAuthor() {
-        try {
-            List<Book> books = bookRepos.findByAuthor("Nikita");
-
-            if (books.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(books, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @DeleteMapping("/books/{id}")
-    public ResponseEntity<HttpStatus> deleteBook(@PathVariable("id") String id) {
-        try {
+        if (existingBook.isPresent()) {
             bookRepos.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 
-    @DeleteMapping("/books")
-    public ResponseEntity<HttpStatus> deleteAllTutorials() {
-        try {
-            bookRepos.deleteAll();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
+    @GetMapping("/performAggregation")
+    public List<AggregationResult> performAggregation() {
+        return aggregationService.performAggregation();
     }
+
 }
