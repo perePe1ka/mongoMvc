@@ -7,14 +7,16 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import ru.laba.mongomvc.models.AggregationResult;
-import ru.laba.mongomvc.models.Books;
 
 import java.util.List;
 
 @Service
 public class AggregationService {
-    @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    public AggregationService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
     public List<AggregationResult> performAggregation() {
         Aggregation aggregation = Aggregation.newAggregation(

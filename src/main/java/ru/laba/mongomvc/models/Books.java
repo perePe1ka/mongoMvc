@@ -14,9 +14,7 @@ import javax.persistence.GenerationType;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Books {
-    @Id
-    private String id;
+public class Books extends BaseEntity{
 
     private String title;
 

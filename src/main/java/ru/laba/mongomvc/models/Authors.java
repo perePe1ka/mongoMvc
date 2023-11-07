@@ -12,9 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Authors {
-    @Id
-    private String id;
+public class Authors extends BaseEntity{
 
     private String name;
 

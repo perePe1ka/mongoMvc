@@ -6,12 +6,11 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "books")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class Genres extends BaseEntity{
-    private String name;
-
-
+@AllArgsConstructor
+@Document(collection = "books")
+public class BaseEntity {
+    @Id
+    private String id;
 }
