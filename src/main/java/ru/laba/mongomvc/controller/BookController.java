@@ -17,11 +17,14 @@ import java.util.Optional;
 @RequestMapping("/books")
 public class BookController {
 
-    @Autowired
-    private BookRepos bookRepos;
 
-    @Autowired
+    private BookRepos bookRepos;
     private AggregationService aggregationService;
+    @Autowired
+    public BookController(BookRepos bookRepos, AggregationService aggregationService) {
+        this.bookRepos = bookRepos;
+        this.aggregationService = aggregationService;
+    }
 
     @GetMapping
     public List<Books> getAllBooks() {
@@ -41,7 +44,7 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Books> updateBook(@PathVariable String id, @RequestBody Books updatedBook) {
+    public ResponseEntity<Books> updateBook(@PathVariable("id") String id, @RequestBody Books updatedBook) {
         Optional<Books> existingBook = bookRepos.findById(id);
 
         if (existingBook.isPresent()) {
@@ -65,10 +68,8 @@ public class BookController {
         }
     }
 
-
     @GetMapping("/performAggregation")
     public List<AggregationResult> performAggregation() {
         return aggregationService.performAggregation();
     }
-
 }

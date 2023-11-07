@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "books")
-public class BaseEntity {
+public abstract class BaseEntity {
     @Id
     private String id;
 }

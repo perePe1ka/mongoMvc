@@ -14,8 +14,13 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/books")
 public class AuthorController {
-    @Autowired
+
     private BookRepos bookRepos;
+
+    @Autowired
+    public AuthorController(BookRepos bookRepos) {
+        this.bookRepos = bookRepos;
+    }
 
     @GetMapping("/authors/all")
     public ResponseEntity<List<Authors>> getAllAuthors() {
@@ -32,14 +37,14 @@ public class AuthorController {
         return book.map(b -> ResponseEntity.ok(b.getAuthor())).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-//    @DeleteMapping("/{bookId}/authors/{authorId}")
-//    public ResponseEntity<Void> deleteAuthor(@PathVariable String bookId, @PathVariable String authorId) {
-//        Optional<Books> book = bookRepos.findById(bookId);
-//        if (book.isPresent() && book.get().getAuthor().getId().equals(authorId)) {
-//            bookRepos.deleteById(bookId);
-//            return ResponseEntity.noContent().build();
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
+    @DeleteMapping("/{bookId}/authors/{authorId}")
+    public ResponseEntity<Void> deleteAuthor(@PathVariable String bookId, @PathVariable String authorId) {
+        Optional<Books> book = bookRepos.findById(bookId);
+        if (book.isPresent() && book.get().getAuthor().getId().equals(authorId)) {
+            bookRepos.deleteById(bookId);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
